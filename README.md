@@ -4,6 +4,7 @@
 This repository has been created as a test monitoring stack using diferents solutions:
 
 A) Collectd -> Graphite -> Grafana
+
 B) Collectd -> Prometheus -> Grafana
 
 For (A) stack:
