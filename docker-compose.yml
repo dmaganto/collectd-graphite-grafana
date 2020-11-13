@@ -1,0 +1,52 @@
+version: '2.1'
+
+networks:
+  monitor-net:
+    driver: bridge
+
+volumes:
+    graphite_data: {}
+    grafana_data: {}
+
+services:
+    collectd:
+       image: alpine-collectd:0.0.1
+       container_name: collectd
+       volumes:
+          - /:/hostfs:ro
+       environment:
+          - GRAPHITE_HOST=graphite
+       depends_on:
+          - graphite
+       networks:
+         - monitor-net
+
+    graphite:
+        image: graphiteapp/graphite-statsd
+        container_name: graphite
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "2003-2004:2003-2004"
+            - "2023-2024:2023-2024"
+            - "8125:8125/udp"
+            - "8126:8126"
+        volumes:
+            - graphite_data:/opt/graphite/storage/whisper
+        networks:
+          - monitor-net
+
+    grafana:
+        image: grafana/grafana
+        container_name: grafana
+        restart: unless-stopped
+        ports:
+            - "3000:3000"
+        volumes:
+            - grafana_data:/var/lib/grafana
+        links:
+            - graphite
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+        networks:
+          - monitor-net
