@@ -15,6 +15,11 @@ LoadPlugin swap
 LoadPlugin write_graphite
 LoadPlugin write_prometheus
 LoadPlugin processes
+LoadPlugin network
+
+<Plugin network>
+  Server "collectd_exporter" "25826"
+</Plugin>
 
 <Plugin "write_prometheus">
   Port "9103"
